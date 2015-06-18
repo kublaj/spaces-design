@@ -181,7 +181,7 @@ define(function (require, exports, module) {
                     // Used to determine the layer face icon
                     var iconID = this._getSVGInfo(layer),
                         ancestry = this._formatLayerAncestry(layer),
-                        layerType = this._getLayerType(layer)
+                        layerType = this._getLayerType(layer);
 
                     return {
                         id: "layer_" + layer.id.toString(),
@@ -288,16 +288,13 @@ define(function (require, exports, module) {
         },
 
         _getFilterOptions: function () {
-            var id = "filter_",
-                title = "";
-
             var layerFilters = Immutable.fromJS(Object.keys(layerLib.layerKinds)).map(function (kind) {
                 var layerType = kind.toLowerCase();
                 return {
                     id: "filter_" + layerType,
                     title: "Search " + layerType + " layers",
                     type: "item"
-                }
+                };
             });
 
             return layerFilters;
@@ -319,7 +316,7 @@ define(function (require, exports, module) {
 
         _filterSearch: function (options, filter) {
             // If haven't typed anything, include all of the options
-            if (filter === "") {
+            if (filter === "" && this.state.filter === "") {
                 return options;
             }
 
@@ -351,7 +348,7 @@ define(function (require, exports, module) {
             
                 if (option.id.indexOf("filter") === 0) {
                     // Don't want to show filter options based on whole title, just the category itself
-                    var titleWords = title.split(" ")
+                    var titleWords = title.split(" ");
                     title = titleWords[1].concat(titleWords[2]);
                 }
                
@@ -364,8 +361,7 @@ define(function (require, exports, module) {
                             useTerm = false;
                         }
                     });
-                }
-                else {
+                } else {
                     _.forEach(searchTerms, function (term) {
                         if (term !== "" && title.indexOf(term) > -1) {
                             useTerm = true;
@@ -383,6 +379,10 @@ define(function (require, exports, module) {
             return (
                 <div
                     onClick={this.props.dismissDialog}>
+                    <div
+                        className="label">
+                        {this.state.filter}
+                    </div>
                    <Datalist
                     live={false}
                     className="dialog-search-bar"
