@@ -184,6 +184,7 @@ define(function (require, exports, module) {
                     if (dialog && dialog.isOpen()) {
                         dialog.toggle(event);
                     }
+                    event.preventDefault();
                 }
                 break;
             }
