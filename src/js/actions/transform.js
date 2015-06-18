@@ -1045,8 +1045,16 @@ define(function (require, exports) {
         return Promise.join(positionPromise, dispatchPromise);
     };
 
+    /**
+     * Transform event handler initialized in beforeStartup
+     *
+     * @private
+     * @type {function()}
+     */
+    var _transformHandler;
+
     var beforeStartupCommand = function () {
-        var _transformHandler = function () {
+        _transformHandler = function () {
             this.dispatch(events.ui.TOGGLE_OVERLAYS, { enabled: true });
             
             // Since finishing the click, the selected layers may have changed, so we'll get
@@ -1062,6 +1070,17 @@ define(function (require, exports) {
         }.bind(this);
 
         descriptor.addListener("transform", _transformHandler);
+        descriptor.addListener("editArtboardEvent", _transformHandler);
+        return Promise.resolve();
+    };
+
+    /**
+     * Clean up event handlers
+     */
+    var onResetCommand = function () {
+        descriptor.removeListener("transform", _transformHandler);
+        descriptor.removeListener("editArtboardEvent", _transformHandler);
+
         return Promise.resolve();
     };
 
@@ -1286,8 +1305,14 @@ define(function (require, exports) {
         writes: []
     };
 
-    exports.beforeStartup = beforeStartup;
+    var onReset = {
+        command: onResetCommand,
+        reads: [],
+        writes: []
+    };
 
+    exports.beforeStartup = beforeStartup;
+    exports.onReset = onReset;
 
     exports.setPosition = setPosition;
     exports.setSize = setSize;
