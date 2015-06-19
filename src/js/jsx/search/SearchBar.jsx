@@ -84,8 +84,12 @@ define(function (require, exports, module) {
 
             switch (type) {
             case "filter":
+                var filterName = idArray[1];
+                if (idArray[2]) {
+                    filterName += " " + idArray[2]
+                }
                 this.setState({
-                    filter: idArray[1]
+                    filter: filterName
                 });
                 return;
             case "layer":
@@ -161,7 +165,13 @@ define(function (require, exports, module) {
             var layerType = "layer ";
             _.forEach(Object.keys(layer.layerKinds), function (kind) {
                 if (layer.kind === layer.layerKinds[kind]) {
-                    layerType += kind;
+                    if (kind === "SMARTOBJECT") {
+                        layerType += "smart object";
+                    } else if (kind === "SOLIDCOLOR") {
+                        layerType += "solid color";
+                    } else {
+                        layerType += kind.toLowerCase();
+                    }
                 }
             });
             return layerType;
@@ -288,14 +298,29 @@ define(function (require, exports, module) {
         },
 
         _getFilterOptions: function () {
-            var layerFilters = Immutable.fromJS(Object.keys(layerLib.layerKinds)).map(function (kind) {
-                var layerType = kind.toLowerCase();
-                return {
-                    id: "filter_" + layerType,
-                    title: "Search " + layerType + " layers",
-                    type: "item"
-                };
-            });
+            var layerKinds = Immutable.fromJS(Object.keys(layerLib.layerKinds)).filterNot(function (kind) {
+                    return kind === "ANY" || kind === "GROUPEND" || kind === "3D" || kind === "VIDEO";
+                }),
+                layerFilters = layerKinds.map(function (kind) {
+                    var layerType = kind.toLowerCase(),
+                        layerName = kind.toLowerCase();
+
+                    switch (layerName) {
+                    case "smartobject":
+                        layerType = "smart_object"
+                        layerName = "smart object";
+                        break;
+                    case "solidcolor":
+                        layerType = "solid_color";
+                        layerName = "solid color";
+                        break;
+                    }
+                    return {
+                        id: "filter_" + layerType,
+                        title: "Search " + layerName + " layers",
+                        type: "item"
+                    };
+                });
 
             return layerFilters;
         },
@@ -350,6 +375,11 @@ define(function (require, exports, module) {
                     // Don't want to show filter options based on whole title, just the category itself
                     var titleWords = title.split(" ");
                     title = titleWords[1].concat(titleWords[2]);
+
+                    // for smart object and solid color layers
+                    if (titleWords[3]  && titleWords[3] !== "layers") {
+                        title.concat(titleWords[3])
+                    }
                 }
                
                 var searchTerms = filter.split(" ");
