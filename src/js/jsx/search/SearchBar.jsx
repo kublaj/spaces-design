@@ -85,6 +85,9 @@ define(function (require, exports, module) {
                 flux = this.getFlux();
 
             switch (type) {
+            case "filter":
+                this._updateFilter(idArray);
+                return;
             case "layer":
                 var document = flux.store("application").getCurrentDocument(),
                     selected = document.layers.byID(idInt);
@@ -112,6 +115,22 @@ define(function (require, exports, module) {
                 break;
             }
             this.props.dismissDialog();
+        },
+
+        /**
+         * Updates this.state.filter to be values contained in the filter id
+         *
+         * @param {Array.<string>} id, ie ["filter", "layer", "text"]
+         */
+        _updateFilter: function (id) {
+            var filterValues = _.drop(id),
+                updatedFilter = this.state.filter.concat(filterValues);
+                
+            this.setState({
+                filter: _.uniq(updatedFilter)
+            });
+
+            this.refs.datalist.resetInput();
         },
 
         /**
@@ -362,6 +381,11 @@ define(function (require, exports, module) {
                                 .concat(currentDocOptions).concat(recentDocOptions);
         },
 
+        /**
+         * Find options to show in the Datalist drop down
+         *
+         * @return {Array.<Object>}
+         */
         _filterSearch: function (options, searchTerm) {
             // Keep track of how many options shown so far in a given category
             var count = 0;
@@ -449,13 +473,7 @@ define(function (require, exports, module) {
                         type = idArray.length > 0 ? idArray[0] : "";
                     
                     if (type === "filter") {
-                        var filterValues = _.drop(idArray),
-                            updatedFilter = this.state.filter.concat(filterValues);
-                        
-                        this.setState({
-                            filter: _.uniq(updatedFilter)
-                        });
-                        this.refs.datalist.resetInput();
+                        this._updateFilter(idArray);
                     }
                     
                     break;
