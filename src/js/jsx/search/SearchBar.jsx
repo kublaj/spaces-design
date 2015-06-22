@@ -402,6 +402,10 @@ define(function (require, exports, module) {
                     return true;
                 }
 
+                if (count === MAX_OPTIONS) {
+                    return false;
+                }
+
                 // Removing this for now because it makes search too broad
                 // If option has info, search for it with and without '/' characters
                 // Don't check each word individually because want search to preserve order of layer hierarchy
@@ -427,7 +431,7 @@ define(function (require, exports, module) {
                         return false;
                     }
                 }
-               
+
                 var searchTerms = searchTerm.split(" ");
 
                 if (this.state.filter.length > 0) {
@@ -445,7 +449,7 @@ define(function (require, exports, module) {
                 }
 
                 // If haven't typed anything, want to use everything that fits into the category
-                if (searchTerm === "" && count < MAX_OPTIONS) {
+                if (searchTerm === "") {
                     count++;
                     return true;
                 }
@@ -453,7 +457,7 @@ define(function (require, exports, module) {
                 useTerm = false;
                 // At least one term in the search box must be in the option's title
                 _.forEach(searchTerms, function (term) {
-                    if (term !== "" && title.indexOf(term) > -1 && count < MAX_OPTIONS) {
+                    if (term !== "" && title.indexOf(term) > -1) {
                         count++;
                         useTerm = true;
                     }
