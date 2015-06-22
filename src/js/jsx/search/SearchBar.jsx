@@ -348,7 +348,7 @@ define(function (require, exports, module) {
 
                     return {
                         id: "filter_" + header + "_" + idType,
-                        title: "Search " + title + " " + header + "s",
+                        title: title + " " + header + "s",
                         category: [header, title.toLowerCase()],
                         type: "item"
                     };
@@ -357,7 +357,7 @@ define(function (require, exports, module) {
                 // To search for all layers, documents, etc
                 headerFilter = {
                     id: "filter_" + header,
-                    title: "Search " + header + "s",
+                    title: header + "s",
                     category: [header],
                     type: "item"
                 };
@@ -417,7 +417,7 @@ define(function (require, exports, module) {
                 // }
 
                 // Check each word of search term for category and title
-                var useTerm = false,
+                var useTerm = true,
                     title = option.title.toLowerCase(),
                     category = option.category || [];
             
@@ -435,7 +435,6 @@ define(function (require, exports, module) {
                 var searchTerms = searchTerm.split(" ");
 
                 if (this.state.filter.length > 0) {
-                    useTerm = true;
                     // All terms in this.state.filter must be in the option's category
                     _.forEach(this.state.filter, function (filterValue) {
                         if (!_.contains(category, filterValue)) {

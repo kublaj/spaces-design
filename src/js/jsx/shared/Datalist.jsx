@@ -245,7 +245,7 @@ define(function (require, exports, module) {
          * @param {string} action Either "apply" or "cancel"
          */
         _handleSelectClose: function (event, action) {
-            if (this.state.id.indexOf("filter") === 0) {
+            if (this.state.id && this.state.id.indexOf("filter") === 0) {
                 this.props.onChange(this.state.id);
                 event.stopPropagation();
                 return;
