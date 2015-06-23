@@ -513,6 +513,7 @@ define(function (require, exports, module) {
                     startFocused={true}
                     placeholderText="Type to search"
                     filter={this._filterSearch}
+                    useAutofill={true}
                     onChange={this._handleChange}
                     onKeyDown={this._handleKeyDown}
                     />
