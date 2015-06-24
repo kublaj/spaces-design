@@ -1070,6 +1070,7 @@ define(function (require, exports) {
         }.bind(this);
 
         descriptor.addListener("transform", _transformHandler);
+        descriptor.addListener("move", _transformHandler);
         descriptor.addListener("editArtboardEvent", _transformHandler);
         return Promise.resolve();
     };
@@ -1079,6 +1080,7 @@ define(function (require, exports) {
      */
     var onResetCommand = function () {
         descriptor.removeListener("transform", _transformHandler);
+        descriptor.removeListener("move", _transformHandler);
         descriptor.removeListener("editArtboardEvent", _transformHandler);
 
         return Promise.resolve();
