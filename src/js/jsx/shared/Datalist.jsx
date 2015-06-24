@@ -61,6 +61,7 @@ define(function (require, exports, module) {
                 active: false,
                 filter: null,
                 id: this.props.defaultSelected,
+                suggestTitle: "",
                 width: 0
             };
         },
@@ -301,21 +302,29 @@ define(function (require, exports, module) {
                     parentEl = hiddenInput.offsetParent,
                     parentRect = parentEl.getBoundingClientRect();
 
-                var suggestionID = (this.props.options && value !== "") ? this.props.options.find(function (opt) {
-                    return opt.title.toLowerCase().indexOf(value.toLowerCase()) === 0;
-                }) : null,
-                    suggestion = suggestionID || this.state.id;
-    
+                var suggestionID = this.state.id,
+                    suggestionTitle = this.state.suggestTitle;
+
+                // Only search for new suggestion if current one is invalid
+                if (!this.state.suggestTitle || this.state.suggestTitle.toLowerCase().indexOf(value.toLowerCase()) !== 0) {
+                    var options = this._filterOptions(value.toLowerCase()),
+                        suggestion = (options && value !== "") ? options.find(function (opt) {
+                                    return opt.title.toLowerCase().indexOf(value.toLowerCase()) === 0;
+                                }) : null;
+                    suggestionID = suggestion ? suggestion.id : this.state.id;
+                    suggestionTitle = suggestion ? suggestion.title : this.state.suggestTitle;
+                }
 
                 this.setState({
                     filter: value,
                     width: elRect.width + (elRect.left - parentRect.left),
-                    id: suggestion
-                }); 
+                    id: suggestionID,
+                    suggestTitle: suggestionTitle
+                });
 
-
+                this.refs.select._setSelected(suggestionID);
             } else {
-                 this.setState({
+                this.setState({
                     filter: value
                 });
             }
@@ -402,26 +411,27 @@ define(function (require, exports, module) {
             
             var autocomplete,
                 hiddenTI;
-            if (this.props.useAutofill) {
-                var suggestionID = (searchableOptions && title !== "") ? searchableOptions.find(function (opt) {
-                    return opt.title.toLowerCase().indexOf(title.toLowerCase()) === 0;
-                }) : null,
-                    suggestion = suggestionID ? suggestionID.title.substring(title.length) : "";
 
-                hiddenTI = ( 
-                <div ref="hiddenTextInput"
-                    className="hiddeninput">                   
-                </div>);
-    
-                var autocompStyle = { left: this.state.width + "px" };
+            if (this.props.useAutofill) {
+                hiddenTI = (
+                    <div ref="hiddenTextInput"
+                        className="hiddeninput">
+                    </div>
+                );
+                
+                var autocompStyle = { left: this.state.width + "px" },
+                    shouldAutofill = (title.length > 0 && this.state.suggestTitle.toLowerCase()
+                                                                    .indexOf(title.toLowerCase()) === 0),
+                    suggestion = shouldAutofill ? this.state.suggestTitle.substring(title.length) : "";
+
                 autocomplete = (
                     <div
                         className="autocomplete"
                         style={autocompStyle}>
                         {suggestion}
-                    </div>);
+                    </div>
+                );
             }
-
 
             var dialog = searchableOptions && (
                 <Dialog
@@ -432,7 +442,7 @@ define(function (require, exports, module) {
                     <Select
                         ref="select"
                         options={searchableOptions}
-                        defaultSelected={this.props.defaultSelected}
+                        defaultSelected={this.props.defaultSelected || this.state.id}
                         sorted={this.props.sorted}
                         onChange={this._handleSelectChange}
                         onClick={this._handleSelectClose}
