@@ -509,8 +509,11 @@ define(function (require, exports, module) {
                 }
                 case "Backspace": {
                     if (!this.refs.datalist.hasNonEmptyInput() && this.state.filter.length > 0) {
-                        var newFilter = this.state.filter;
-                        newFilter.pop();
+                        // var newFilter = this.state.filter;
+                        // newFilter.pop();
+
+                        // For now, only support having one icon at a time
+                        var newFilter = [];
                         this.setState({
                             filter: newFilter
                         });

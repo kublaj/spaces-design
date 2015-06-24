@@ -23,7 +23,10 @@
 
 
 .search-bar__dialog {
-    background-color: @warm-black;
+    background: url(../img/ico-search-white.svg) no-repeat left @warm-black;
+    background-size: 1rem;
+    background-position: 1.5rem 1.5rem;
+
     color:@warm-white;
     line-height: normal;
     width: 30rem;
@@ -47,13 +50,12 @@
 
 .search-bar__dialog .drop-down input:focus {
     background: rgba(0,0,0,0);
-    color: @warm-gray;
+    color: @warm-white;
 }
 
 .search-bar__dialog .drop-down input:focus:hover {
     background: rgba(0,0,0,0);
     border: none;
-    border-bottom: @hairline solid @highlight;
 }
 
 .search-bar__dialog .drop-down:hover {
@@ -89,6 +91,8 @@
 }
 
 .search-bar__dialog .datalist__svg {
+    width: 1.5rem;
+    height: 1.5rem;
     margin-right: 0.5rem;
     stroke:  @warm-gray;
     fill:  @warm-gray;
